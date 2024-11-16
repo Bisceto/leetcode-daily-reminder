@@ -1,13 +1,15 @@
-import { Telegraf } from "telegraf";
+import { Markup, Telegraf } from "telegraf";
 import { getDailyChallenge } from "../services/leetcode";
 
 export function setupCommands(bot: Telegraf) {
-  bot.command("quit", async (ctx) => {
-    // Explicit usage
-    await ctx.telegram.leaveChat(ctx.message.chat.id);
-
-    // Using context shortcut
-    await ctx.leaveChat();
+  bot.command("start", async (ctx) => {
+    const startMessage = `
+      Welcome to LeetCode Daily Reminder Bot! 
+      This bot can do the following:
+      1. Fetch the daily challenge from LeetCode. Use the /daily command to get today's challenge.
+      2. Configure when you want to receive notifications about the daily challenge. Use the /edit_reminder command to edit your reminders.
+    `;
+    await ctx.reply(startMessage);
   });
 
   bot.command("daily", async (ctx) => {
