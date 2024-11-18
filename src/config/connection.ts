@@ -5,7 +5,10 @@ import OpenAI from "openai";
 config();
 
 export const pool = new Pool({
-  connectionString: process.env.DEVELOPMENT_DATABASE_URL,
+  connectionString:
+    process.env.NODE_ENV === "development"
+      ? process.env.DEVELOPMENT_DATABASE_URL
+      : process.env.PRODUCTION_DATABASE_URL,
 });
 
 export const query = (text: string, params?: any[]) => pool.query(text, params);
