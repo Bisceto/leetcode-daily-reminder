@@ -1,69 +1,93 @@
-import { query } from "./connection";
+import { Pool } from "pg";
+import { query } from "../config/connection";
 
-export const createUser = async (chatId: number) => {
-  const text = `INSERT INTO users(chat_id, first_reminder, second_reminder) VALUES($1, $2, $3) 
+export const createUser = async (chatId: number, db: Pool) => {
+  const text = `INSERT INTO users(chat_id, reminder_1, reminder_2) VALUES($1, $2, $3) 
      ON CONFLICT (chat_id) DO NOTHING RETURNING *`;
-  const values = [chatId, "0 14 * * *", "0 20 * * *"];
-  return await query(text, values);
+  const values = [chatId, "0 6 * * *", "0 14 * * *"];
+  return await db.query(text, values);
 };
 
-export const getUsersToNotifyAtCurrentHour = async () => {
+export const getUser = async (chatId: number, db: Pool) => {
+  const text = "SELECT * FROM users WHERE chat_id = $1 LIMIT 1";
+  const values = [chatId];
+  return await db.query(text, values);
+};
+
+export const getUsersToNotify = async (db: Pool) => {
+  const text = `SELECT * FROM users WHERE pause = false`;
+  return await db.query(text);
+};
+
+export const getUsersToNotifyAtCurrentHour = async (db: Pool) => {
   // Get the current hour
   const currentHour = new Date().getHours();
-
-  // Create a CRON expression for the current hour
   const currentHourCron = `0 ${currentHour} * * *`;
 
-  // Query the database for users whose first_reminder or second_reminder matches the current hour
-  const text = `SELECT * FROM users WHERE (first_reminder = $1 OR second_reminder = $1) AND pause = false AND done_for_today = false`;
+  // Query the database for users whose reminder_1 or reminder_2 matches the current hour
+  const text = `SELECT * FROM users WHERE (reminder_1 = $1 OR reminder_2 = $1) AND pause = false AND done_for_today = false`;
   const values = [currentHourCron];
-  return await query(text, values);
+  return await db.query(text, values);
 };
 
-export const pauseNotifications = async (chatId: number) => {
+export const pauseNotifications = async (chatId: number, db: Pool) => {
   const text = "UPDATE users SET pause = true WHERE chat_id = $1 RETURNING *";
   const values = [chatId];
-  const res = await query(text, values);
+  const res = await db.query(text, values);
   console.log("pause notifications for chatId", chatId);
   return res;
 };
 
-export const resumeNotifications = async (chatId: number) => {
+export const resumeNotifications = async (chatId: number, db: Pool) => {
   const text = "UPDATE users SET pause = false WHERE chat_id = $1 RETURNING *";
   const values = [chatId];
-  const res = await query(text, values);
+  const res = await db.query(text, values);
   console.log("resume notifications for chatId", chatId);
   return res;
 };
 
-export const markDoneForToday = async (chatId: number) => {
+export const markDoneForToday = async (chatId: number, db: Pool) => {
   const text =
     "UPDATE users SET done_for_today = true WHERE chat_id = $1 RETURNING *";
   const values = [chatId];
-  return await query(text, values);
+  return await db.query(text, values);
 };
 
-export const resetDoneForToday = async () => {
+export const markUndoneForToday = async (chatId: number, db: Pool) => {
+  const text =
+    "UPDATE users SET done_for_today = false WHERE chat_id = $1 RETURNING *";
+  const values = [chatId];
+  return await db.query(text, values);
+};
+
+export const resetDoneForToday = async (db: Pool) => {
   const text = "UPDATE users SET done_for_today = false";
-  return await query(text);
+  return await db.query(text);
 };
 
-export const getAllUsers = async () => {
+export const updateUserReminder = async (
+  chatId: number,
+  cronExpression: string,
+  reminder: number,
+  db: Pool
+) => {
+  const column = `reminder_${reminder}`; // Determine the column based on the reminder
+  const text = `UPDATE users SET ${column} = $2 WHERE chat_id = $1 RETURNING *`; // Use the column in the SQL query
+  const values = [chatId, cronExpression];
+  return await db.query(text, values);
+};
+
+// Mainly for testing
+export const getAllUsers = async (db: Pool) => {
   const text = "SELECT * FROM users";
-  const res = await query(text);
+  const res = await db.query(text);
   return res;
 };
 
-export const deleteUser = async (chatId: number) => {
-  const text = "DELETE FROM users WHERE id = $1 RETURNING *";
-  const values = [chatId];
-  return await query(text, values);
-};
-
 //Dangerous! Only to be used in testing
-export const clearUsers = async () => {
+export const clearUsers = async (db: Pool) => {
   const text = "DELETE FROM users";
-  const res = await query(text);
+  const res = await db.query(text);
   console.log("db cleared");
   return res;
 };

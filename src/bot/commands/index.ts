@@ -1,10 +1,11 @@
-import { Telegraf } from "telegraf";
+import { Markup, Telegraf } from "telegraf";
 import { startCommand } from "./start";
 import { dailyCommand } from "./daily";
 import { pauseCommand } from "./pause";
 import { resumeCommand } from "./resume";
 import { doneCommand } from "./done";
 import { editCommand } from "./edit";
+import { undoneCommand } from "./undone";
 
 export function setupCommands(bot: Telegraf) {
   bot.start(startCommand);
@@ -12,6 +13,7 @@ export function setupCommands(bot: Telegraf) {
   bot.command("pause", pauseCommand);
   bot.command("resume", resumeCommand);
   bot.command("done", doneCommand);
+  bot.command("undone", undoneCommand);
 
   editCommand(bot);
   bot.telegram.setMyCommands([
@@ -23,6 +25,11 @@ export function setupCommands(bot: Telegraf) {
       command: "done",
       description:
         "Cancel today's notifications when you've completed today's challenge",
+    },
+    {
+      command: "undone",
+      description:
+        "Resume today's notifications if you've not completed today's challenge",
     },
     {
       command: "pause",
