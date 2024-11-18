@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "start": "node src/bot/index.ts",
+    "build": "tsc",
+    "heroku-postbuild": "npm run build",
+    "start": "node dist/bot/index.js",
     "start-dev": "nodemon src/bot/index.ts"
   },
   "keywords": [],
