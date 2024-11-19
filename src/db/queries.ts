@@ -1,5 +1,4 @@
 import { Pool } from "pg";
-import { query } from "../config/connection";
 
 export const createUser = async (chatId: number, db: Pool) => {
   const text = `INSERT INTO users(chat_id, reminder_1, reminder_2) VALUES($1, $2, $3) 
@@ -34,7 +33,6 @@ export const pauseNotifications = async (chatId: number, db: Pool) => {
   const text = "UPDATE users SET pause = true WHERE chat_id = $1 RETURNING *";
   const values = [chatId];
   const res = await db.query(text, values);
-  console.log("pause notifications for chatId", chatId);
   return res;
 };
 
@@ -42,7 +40,6 @@ export const resumeNotifications = async (chatId: number, db: Pool) => {
   const text = "UPDATE users SET pause = false WHERE chat_id = $1 RETURNING *";
   const values = [chatId];
   const res = await db.query(text, values);
-  console.log("resume notifications for chatId", chatId);
   return res;
 };
 

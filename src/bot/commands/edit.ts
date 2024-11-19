@@ -98,7 +98,6 @@ export const editCommand = (bot: Telegraf) => {
 
   bot.action("reminder_1", async (ctx) => {
     // Handle editing of Reminder 1
-    console.log("Editing Reminder 1");
     await ctx.editMessageText(
       "Select a new reminder time",
       generateKeyboard(0, 1)
@@ -108,7 +107,6 @@ export const editCommand = (bot: Telegraf) => {
 
   bot.action("reminder_2", async (ctx) => {
     // Handle editing of Reminder 2
-    console.log("Editing Reminder 2");
     await ctx.editMessageText(
       "Select a new reminder time",
       generateKeyboard(0, 2)

@@ -1,4 +1,4 @@
-import { Markup, Telegraf } from "telegraf";
+import { Telegraf } from "telegraf";
 import { startCommand } from "./start";
 import { dailyCommand } from "./daily";
 import { pauseCommand } from "./pause";
@@ -44,4 +44,5 @@ export function setupCommands(bot: Telegraf) {
       description: "Configure your reminders",
     },
   ]);
+  console.log("Bot has set up commands");
 }
