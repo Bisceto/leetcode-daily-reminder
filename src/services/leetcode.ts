@@ -1,7 +1,6 @@
 import { convert } from "html-to-text";
-import { DailyChallenge, LeetCode, TopicTag } from "leetcode-query";
-import { fmt, bold, spoiler, link } from "telegraf/format";
-import { setCache, getCache } from "../utils/cache";
+import { LeetCode } from "leetcode-query";
+import { setCache } from "../utils/cache";
 import { calculateSecondsUntilMidnightUTC } from "../utils/helpers";
 import { openai } from "../config/connection";
 
@@ -9,12 +8,10 @@ const leetcode = new LeetCode();
 
 const formatContentOptions = {
   wordwrap: null,
-  encodeCharacters: {
-    "<=": "&lt;",
-    ">=": "&gt;",
-  },
 };
 
+const openaiSystemPrompt =
+  "You are an expert in data structures and algorithms. You will only receive problem statements. You are tasked to summarise any problems you receive into an easy-to-understand paragraph. Ensure that there are no unnecessary special characters in your answer. You can give a brief description of the example but keep it simple.";
 // Retrieves daily challenge data and caches it.
 export async function getDailyChallenge() {
   let challenge = await leetcode.daily();
@@ -22,14 +19,14 @@ export async function getDailyChallenge() {
     challenge.question.content,
     formatContentOptions
   );
+  let generatedText = undefined;
   if (process.env.NODE_ENV === "production") {
     const summarisedContent = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
         {
           role: "system",
-          content:
-            "You are an expert in data structures and algorithms. You will only receive problem statements. You are tasked to summarise any problems you receive into an easy-to-understand paragraph.",
+          content: openaiSystemPrompt,
         },
         {
           role: "user",
@@ -37,41 +34,10 @@ export async function getDailyChallenge() {
         },
       ],
     });
-    let generatedText =
-      summarisedContent.choices[0].message.content ||
-      challenge.question.content;
-    challenge["question"]["content"] = generatedText;
+    generatedText = summarisedContent.choices[0].message.content;
   }
+  challenge["question"]["content"] = generatedText || formattedContent;
 
   setCache("dailyChallenge", challenge, calculateSecondsUntilMidnightUTC());
   return challenge;
-}
-
-export async function getChallengeInformation() {
-  // Try to get the challenge from the cache
-  let challenge = getCache<DailyChallenge>("dailyChallenge");
-
-  if (!challenge) {
-    // If the challenge is not in the cache or has expired, fetch it from the API
-    challenge = await getDailyChallenge();
-    setCache("dailyChallenge", challenge, calculateSecondsUntilMidnightUTC());
-  }
-
-  const date = new Date(challenge.date).toLocaleDateString();
-  const title = `${challenge.question.title}`;
-  const url = `https://leetcode.com${challenge.link}`;
-  const difficulty = challenge.question.difficulty;
-  const content = convert(challenge.question.content, formatContentOptions);
-  const topics = challenge.question.topicTags.map(
-    (topicTag: TopicTag) => topicTag.name
-  );
-  const message = fmt`
-  ${bold`LeetCode Daily Challenge for ${date}.`}
-  \nTitle: ${link(title, url)}
-  \nDifficulty: ${difficulty}
-  \n${content}
-  \nTopics: ${spoiler`${topics.join(", ")}`}
-  `;
-
-  return message;
 }

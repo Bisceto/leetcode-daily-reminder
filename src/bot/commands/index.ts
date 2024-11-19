@@ -9,13 +9,13 @@ import { undoneCommand } from "./undone";
 
 export function setupCommands(bot: Telegraf) {
   bot.start(startCommand);
-  bot.command("daily", dailyCommand);
   bot.command("pause", pauseCommand);
   bot.command("resume", resumeCommand);
   bot.command("done", doneCommand);
   bot.command("undone", undoneCommand);
 
   editCommand(bot);
+  dailyCommand(bot);
   bot.telegram.setMyCommands([
     {
       command: "daily",
