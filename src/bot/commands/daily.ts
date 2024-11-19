@@ -49,7 +49,12 @@ export async function dailyCommand(bot: Telegraf) {
   \nTopics: ${spoiler`${topics.join(", ")}`}
   `;
 
-    await ctx.reply(message, keyboard);
+    await ctx.reply(message, {
+      reply_markup: keyboard.reply_markup,
+      link_preview_options: {
+        is_disabled: true,
+      },
+    });
   }
 
   bot.command("daily", (ctx) => getChallengeInformation(ctx, challenge));
