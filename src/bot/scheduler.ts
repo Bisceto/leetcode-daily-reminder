@@ -83,7 +83,7 @@ export const scheduleUserRemindersJob = (bot: Telegraf) => {
       try {
         const selectedUsers = await getUsersToNotifyAtCurrentHour(pool);
         //Parameter should be the time
-        const hours = calculateSecondsUntilMidnightUTC() / 3600;
+        const hours = Math.round(calculateSecondsUntilMidnightUTC() / 3600);
         for (const user of selectedUsers.rows) {
           bot.telegram.sendMessage(
             user.chat_id,

@@ -68,7 +68,7 @@ You can then install the dependencies and start the bot with the following comma
 
 ```bash
 npm install
-npm start
+npm start-dev
 ```
 
 This bot was developed by Wesley Teo 2024.

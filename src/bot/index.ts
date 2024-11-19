@@ -18,14 +18,16 @@ testConnections();
 bot.launch();
 
 // Start express server
-const app = express();
-const port = process.env.PORT || 3000;
-app.get("/", (_: express.Request, res: express.Response) => {
-  res.send("Bot is running");
-});
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+if (process.env.NODE_ENV === "production") {
+  const app = express();
+  const port = process.env.PORT || 3000;
+  app.get("/", (_: express.Request, res: express.Response) => {
+    res.send("Bot is running");
+  });
+  app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
+}
 
 // Handle graceful shutdown
 process.on("SIGINT", async () => {
