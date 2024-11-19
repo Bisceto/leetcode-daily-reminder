@@ -1,6 +1,7 @@
 # LeetCode Daily Reminder Telegram Bot
 
 This is a Telegram bot that sends daily reminders about the LeetCode's Daily Challenge. It is designed to help users keep track of their daily LeetCode challenges and manage their reminders.
+You can access the bot using this link: [LeetCode Daily Reminder Bot](https://t.me/leetcode_daily_reminder_bot)
 
 ## Features
 
@@ -34,9 +35,11 @@ The codebase is organized into several main directories:
 - `src/config`: Contains configuration files such as connections to postgresql and openAPI.
 - `tests`: Contains test files.
 
-The bot uses PostgreSQL for its database and is built with TypeScript. It uses the `telegraf` library for Telegram bot functionality and the `leetcode-query` library to fetch the daily LeetCode challenge.
+The bot is built with TypeScript and utilizes PostgreSQL for its database. It employs the [`telegraf`](https://www.npmjs.com/package/telegraf) library for Telegram bot functionality. For fetching the daily LeetCode challenge, it uses the [`leetcode-query`](https://www.npmjs.com/package/leetcode-query) library.
 
 The bot's main entry point is `src/bot/index.ts`. This file sets up the bot, registers the command handlers, and starts the bot.
+
+The bot connects to the PostgreSQL database and OpenAI API via `src/config/connection.ts`.
 
 The command handlers are located in `src/bot/commands`. Each command has its own file, and all commands are imported and set up in `src/bot/commands/index.ts`.
 
@@ -67,6 +70,8 @@ You can then install the dependencies and start the bot with the following comma
 npm install
 npm start
 ```
+
+This bot was developed by Wesley Teo 2024.
 
 ## License
 
