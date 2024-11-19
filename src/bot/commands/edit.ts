@@ -86,7 +86,7 @@ export const editCommand = (bot: Telegraf) => {
 
   const pages = chunkArray([...Array(24).keys()], 12); // Change 5 to the number of buttons per page
 
-  bot.action(/page_(\d+)/, async (ctx) => {
+  bot.action(/page_(\d+)_reminder_(\d+)/, async (ctx) => {
     const page = Number(ctx.match[1]);
     const reminder = Number(ctx.match[2]);
     await ctx.editMessageText(
@@ -121,8 +121,13 @@ export const editCommand = (bot: Telegraf) => {
 
       // Update reminder 1 in the database
       await updateUserReminder(ctx.chat.id, cronExpression, 1, pool);
+      await ctx.answerCbQuery();
 
-      await ctx.reply("Your first reminder has been updated.");
+      await ctx.editMessageText(
+        `Your first reminder has been updated to ${formatCronToHour(
+          cronExpression
+        )}.`
+      );
     } else {
       console.error("Chat context is undefined");
     }
@@ -135,8 +140,12 @@ export const editCommand = (bot: Telegraf) => {
 
       // Update reminder 2 in the database
       await updateUserReminder(ctx.chat.id, cronExpression, 2, pool);
-
-      await ctx.reply("Your second reminder has been updated.");
+      await ctx.answerCbQuery();
+      await ctx.editMessageText(
+        `Your second reminder has been updated to ${formatCronToHour(
+          cronExpression
+        )}.`
+      );
     } else {
       console.error("Chat context is undefined");
     }
