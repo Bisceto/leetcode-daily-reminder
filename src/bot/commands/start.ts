@@ -13,6 +13,7 @@ export async function startCommand(ctx: Context) {
     \nYou can use the following commands:
     \n /daily - Get information about today's challenge.
     \n /done - Stop receiving notifications for the day once you've completed today's challenge.
+    \n /undone - Resume notifications for the day if you've not completed today's challenge.
     \n /pause - Pause all notifications indefinitely.
     \n /resume - Resume all notifications.
     \n /edit - Configure your reminders.
