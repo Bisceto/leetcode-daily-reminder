@@ -3,6 +3,7 @@ import { config } from "dotenv";
 import { setupCommands } from "./commands";
 import { scheduleUserRemindersJob } from "./scheduler";
 import { pool, testConnections } from "../config/connection";
+import express from "express";
 
 config();
 
@@ -15,6 +16,16 @@ setupCommands(bot);
 scheduleUserRemindersJob(bot);
 testConnections();
 bot.launch();
+
+// Start express server
+const app = express();
+const port = process.env.PORT || 3000;
+app.get("/", (_: express.Request, res: express.Response) => {
+  res.send("Bot is running");
+});
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
+});
 
 // Handle graceful shutdown
 process.on("SIGINT", async () => {
