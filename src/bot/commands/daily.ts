@@ -18,7 +18,7 @@ export async function dailyCommand(bot: Telegraf) {
   ) {
     // Try to get the challenge object from the cache
 
-    const date = new Date(challenge.date).toLocaleString().split(",")[0];
+    const date = new Date(challenge.date).toLocaleString("en-GB").split(",")[0];
     const title = `${challenge.question.title}`;
     const url = `https://leetcode.com${challenge.link}`;
     const content = challenge.question.content;
