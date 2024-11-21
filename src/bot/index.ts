@@ -1,7 +1,7 @@
 import { Telegraf } from "telegraf";
 import { config } from "dotenv";
 import { setupCommands } from "./commands";
-import { scheduleUserRemindersJob } from "./scheduler";
+import { scheduleUserRemindersJob, sendDailyChallengeJob } from "./scheduler";
 import { pool, testConnections } from "../config/connection";
 import express from "express";
 
@@ -14,6 +14,7 @@ const bot = new Telegraf(process.env.TELEGRAM_TOKEN);
 
 setupCommands(bot);
 scheduleUserRemindersJob(bot);
+sendDailyChallengeJob(bot);
 testConnections();
 bot.launch();
 

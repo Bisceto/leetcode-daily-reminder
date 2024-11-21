@@ -16,6 +16,7 @@ const cache: Record<string, CacheEntry<any>> = {};
  * @param {number} ttl - The Time To Live for the cache entry in seconds. Defaults to 3600 seconds (1 hour).
  */
 export const setCache = <T>(key: string, value: T, ttl = 3600): void => {
+  // Converts the ttl to ms
   const expireAt = Date.now() + ttl * 1000;
   cache[key] = { value, expireAt };
 };

@@ -9,9 +9,12 @@ import {
 import { calculateSecondsUntilMidnightUTC } from "../utils/helpers";
 import { pool } from "../config/connection";
 
-// Schedule a CRON job to fetch the daily challenge at 00:00 UTC
+/**
+ * Schedule a CRON job to fetch the daily challenge at 00:05 UTC
+ * LeetCode resets at 00:00 UTC, but there is latency between the challenge reset and the fetching of the the updated challenge.
+ */
 export const fetchDailyChallengeJob = new CronJob(
-  "0 0 * * *",
+  "5 0 * * *",
   async () => {
     try {
       await getDailyChallenge();
@@ -31,7 +34,7 @@ export const fetchDailyChallengeJob = new CronJob(
 
 export const sendDailyChallengeJob = (bot: Telegraf) => {
   new CronJob(
-    "0 0 * * *",
+    "5 0 * * *",
     async () => {
       try {
         const users = await getUsersToNotify(pool);
