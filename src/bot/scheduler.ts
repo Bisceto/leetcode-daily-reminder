@@ -8,6 +8,7 @@ import {
 } from "../db/queries";
 import { calculateSecondsUntilMidnightUTC } from "../utils/helpers";
 import { pool } from "../config/connection";
+import { setCache } from "../utils/cache";
 
 /**
  * Schedule a CRON job to fetch the daily challenge at 00:05 UTC
@@ -17,7 +18,9 @@ export const fetchDailyChallengeJob = new CronJob(
   "5 0 * * *",
   async () => {
     try {
-      await getDailyChallenge();
+      const challenge = await getDailyChallenge();
+      setCache("dailyChallenge", challenge, calculateSecondsUntilMidnightUTC());
+
       console.log(
         `${new Date().toUTCString()}: Successfully fetched and cached the daily LeetCode question}`
       );
@@ -34,7 +37,7 @@ export const fetchDailyChallengeJob = new CronJob(
 
 export const sendDailyChallengeJob = (bot: Telegraf) => {
   new CronJob(
-    "5 0 * * *",
+    "30 0 * * *",
     async () => {
       try {
         const users = await getUsersToNotify(pool);

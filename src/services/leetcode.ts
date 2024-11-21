@@ -1,7 +1,5 @@
 import { convert } from "html-to-text";
 import { LeetCode } from "leetcode-query";
-import { setCache } from "../utils/cache";
-import { calculateSecondsUntilMidnightUTC } from "../utils/helpers";
 import { openai } from "../config/connection";
 
 const leetcode = new LeetCode();
@@ -37,7 +35,5 @@ export async function getDailyChallenge() {
     generatedText = summarisedContent.choices[0].message.content;
   }
   challenge["question"]["content"] = generatedText || formattedContent;
-
-  setCache("dailyChallenge", challenge, calculateSecondsUntilMidnightUTC());
   return challenge;
 }

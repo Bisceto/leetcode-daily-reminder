@@ -1,8 +1,7 @@
 import { Context, Markup, Telegraf } from "telegraf";
 import { getDailyChallenge } from "../../services/leetcode";
-import { getCache, setCache } from "../../utils/cache";
+import { getCache } from "../../utils/cache";
 import { DailyChallenge, TopicTag } from "leetcode-query";
-import { calculateSecondsUntilMidnightUTC } from "../../utils/helpers";
 import { bold, fmt, link, spoiler } from "telegraf/format";
 
 export async function dailyCommand(bot: Telegraf) {
@@ -10,7 +9,6 @@ export async function dailyCommand(bot: Telegraf) {
   if (!challenge) {
     // If the challenge is not in the cache or has expired, fetch it from the API
     challenge = await getDailyChallenge();
-    setCache("dailyChallenge", challenge, calculateSecondsUntilMidnightUTC());
   }
   async function getChallengeInformation(
     ctx: Context,
