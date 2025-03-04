@@ -1,14 +1,16 @@
 import { Context, Markup, Telegraf } from "telegraf";
 import { getDailyChallenge } from "../../services/leetcode";
-import { getCache } from "../../utils/cache";
+import { getCache, setCache } from "../../utils/cache";
 import { DailyChallenge, TopicTag } from "leetcode-query";
 import { bold, fmt, link, spoiler } from "telegraf/format";
+import { calculateSecondsUntilMidnightUTC } from "../../utils/helpers";
 
 export async function dailyCommand(bot: Telegraf) {
   let challenge = getCache<DailyChallenge>("dailyChallenge");
   if (!challenge) {
-    // If the challenge is not in the cache or has expired, fetch it from the API
+    // If the challenge is not in the cache or has expired, fetch it from the API and cache it
     challenge = await getDailyChallenge();
+    setCache("dailyChallenge", challenge, calculateSecondsUntilMidnightUTC());
   }
   async function getChallengeInformation(
     ctx: Context,
@@ -25,6 +27,7 @@ export async function dailyCommand(bot: Telegraf) {
       (topicTag: TopicTag) => topicTag.name
     );
 
+    // Create buttons array for hints and difficulty
     const buttons = [];
 
     // Add a button for each hint in the hints array
@@ -37,15 +40,15 @@ export async function dailyCommand(bot: Telegraf) {
     }
     buttons.push(Markup.button.callback("Difficulty", "difficulty"));
 
-    // Create the inline keyboard
+    // Create the inline keyboard for the buttons
     const keyboard = Markup.inlineKeyboard(buttons);
 
     const message = fmt`
-  ${bold`LeetCode Daily Challenge for ${date}.`}
-  \nTitle: ${link(title, url)}
-  \n${content}
-  \nTopics: ${spoiler`${topics.join(", ")}`}
-  `;
+    ${bold`LeetCode Daily Challenge for ${date}.`}
+    \nTitle: ${link(title, url)}
+    \n${content}
+    \nTopics: ${spoiler`${topics.join(", ")}`}
+    `;
 
     await ctx.reply(message, {
       reply_markup: keyboard.reply_markup,

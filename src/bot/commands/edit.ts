@@ -4,6 +4,7 @@ import { formatCronToHour } from "../../utils/helpers";
 import { pool } from "../../config/connection";
 
 export const editCommand = (bot: Telegraf) => {
+  // Handles the state when navigating to and from the edit menu
   async function editReminderMenu(ctx: Context, back = false) {
     if (ctx.chat) {
       const user = await getUser(ctx.chat.id, pool);
@@ -36,7 +37,8 @@ export const editCommand = (bot: Telegraf) => {
       console.error("Chat context is undefined");
     }
   });
-  // Function to split array into chunks
+
+  // Function to split array into chunks. For the keyboard
   function chunkArray(array: any[], size: number) {
     const chunked_arr = [];
     let index = 0;
@@ -47,7 +49,7 @@ export const editCommand = (bot: Telegraf) => {
     return chunked_arr;
   }
 
-  // Function to generate keyboard for a specific page
+  // Function to generate keyboard for a specific page and reminder
   function generateKeyboard(page: number, reminder: number) {
     const buttons = pages[page].map((hour: number) => {
       const formattedHour = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;

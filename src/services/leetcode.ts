@@ -8,9 +8,12 @@ const formatContentOptions = {
   wordwrap: null,
 };
 
-const openaiSystemPrompt =
-  "You are an expert in data structures and algorithms. You will only receive problem statements. You are tasked to summarise any problems you receive into an easy-to-understand paragraph. Ensure that there are no unnecessary special characters in your answer. You can give a brief description of the example but keep it simple.";
-// Retrieves daily challenge data and caches it.
+const openaiSystemPrompt = `
+  You are an expert in data structures and algorithms. You will only receive problem statements. 
+  You are tasked to summarise any problems you receive into an easy-to-understand paragraph. 
+  Ensure that there are no unnecessary special characters in your answer. You can give a brief description of the example but keep it simple.
+`;
+// Retrieves daily challenge data from the LeetCode API
 export async function getDailyChallenge() {
   let challenge = await leetcode.daily();
   const formattedContent = convert(
